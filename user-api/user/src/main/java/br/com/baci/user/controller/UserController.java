@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,63 +12,62 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.baci.user.domain.user.UserDTO;
+import br.com.baci.user.service.UserService;
 import jakarta.annotation.PostConstruct;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     public static List<UserDTO> usuarios = new ArrayList<UserDTO>();
 
+    @Autowired
+    private UserService userService;    
+
     @GetMapping
-    public ResponseEntity getMensagem(){        
-        return ResponseEntity.ok().body("Spring boot is working!!");
-    }
-
-
-    @GetMapping("/all-users")
-    public ResponseEntity getAllUsers(@PathVariable String cpf){
+    public ResponseEntity getUsers(){
+        List<UserDTO> users = userService.getAll();        
         return ResponseEntity.ok().body(
-            usuarios
+            users
         );
     }
 
-
-    @GetMapping("/{cpf}")
-    public ResponseEntity getUserById(@PathVariable String cpf){
-        return ResponseEntity.ok().body(
-            usuarios.stream()
-            .filter(user -> cpf.equals(user.getCpf()))            
-            .map(UserDTO::new)
-        ); // https://www.baeldung.com/find-list-element-java
-    }    
-
-
-    @PostMapping("/newUser")    
-    public ResponseEntity inserir(@RequestBody UserDTO userDto, UriComponentsBuilder UriBuilder){
-        UserDTO novoUsuario = userDto;
-        novoUsuario.setDataCadastro(new Date());
-        usuarios.add(userDto);
-        var uri = UriBuilder.path("users/{cpf}").buildAndExpand(novoUsuario.getCpf()).toUri();
-        return ResponseEntity.created(uri).body(novoUsuario);
+    @GetMapping("/{id}")
+    public ResponseEntity findById(@PathVariable Long id){
+        UserDTO user = userService.findById(id);
+        return ResponseEntity.ok().body(user); // https://www.baeldung.com/find-list-element-java
     }
 
-
-    @DeleteMapping("/{cpf}")
-    public ResponseEntity remover(@PathVariable String cpf){
+    @GetMapping("/cpf/{cpf}")
+    public ResponseEntity getUserById(@PathVariable String cpf){
+        UserDTO userDTO = userService.findByCpf(cpf);
+        return ResponseEntity.ok().body(userDTO);
+        // https://www.baeldung.com/find-list-element-java
         // usuarios.stream()
-        //     .filter(user -> cpf.equals(user.getCpf()));
-        for (UserDTO userFilter: usuarios) {
-            if (userFilter.getCpf().equals(cpf)) {
-                usuarios.remove(userFilter);
-                ResponseEntity.noContent().build();
-            }
-        }
-        // return false;
+        //     .filter(user -> cpf.equals(user.getCpf()))
+        //     .map(UserDTO::new)
+    }
+    
+    @GetMapping("/user/search")
+    public ResponseEntity queryByName(@RequestParam(name="nome", required = true) String nome){
+        return ResponseEntity.ok().body(userService.queryByName(nome));
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity newUser(@RequestBody UserDTO userDTO, UriComponentsBuilder UriBuilder){        
+        userService.save(userDTO);
+        var uri = UriBuilder.path("user/{cpf}").buildAndExpand(userDTO.getCpf()).toUri();
+        return ResponseEntity.created(uri).body(userDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity remover(@PathVariable Long id){
+        userService.delete(id);            
         return ResponseEntity.noContent().build();
     }
 
