@@ -2,6 +2,8 @@ package br.com.baci.product.model;
 
 import br.com.baci.product.dto.ProductDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,10 +27,12 @@ public class Product {
     private String nome;
     private Float preco;
     private String descricao;
-    private String productIdentifier;
+
+    @Enumerated(EnumType.STRING)
+    private ProductIdentifier productIdentifier;
 
     @ManyToOne
-    @JoinColumn(name  = "category_id")
+    @JoinColumn(name = "category_id")
     private Category category;
 
     public static Product convert(ProductDTO productDTO){
@@ -38,8 +42,9 @@ public class Product {
         product.setDescricao(productDTO.descricao());
         product.setProductIdentifier(productDTO.productIdentifier());
         if(productDTO.categoryDTO() != null){
-            product.setCategory(Category.convert(productDTO.categoryDTO()));
-        }                
+            product.setCategory(
+                Category.convert(productDTO.categoryDTO()));
+        }
         return product;
     }
 }

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  postgres: #-----------------------------------------------------------------
+    # container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: dev      
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432:5432"
+
+  adminer: #-----------------------------------------------------------------
+    image: adminer
+    restart: always
+    ports:
+      - 3000:8080
+
+    # Dados de conexao com o adminer
+    # sistema: PostgreSQL
+    # usuario: admin
+    # senha: example
+
+  pgadmin: #-----------------------------------------------------------------
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+    # Dados de conexao com pdadmin
+    # sistema: PostgreSQL
+    # usuario: admin
+    # senha: example
+    # hostname/address: nome da máquina, cmd e digita hostname
+
+
+
+# Resolução --------------------------------------------------------------------
+# https://www.baeldung.com/ops/docker-compose-expose-vs-ports
+# https://linuxhandbook.com/docker-expose-port/
+# https://hub.docker.com/_/postgres
+# https://towardsdatascience.com/how-to-run-postgresql-and-pgadmin-using-docker-3a6a8ae918b5
+# https://stackoverflow.com/questions/25540711/docker-postgres-pgadmin-local-connection
+# https://docs.docker.com/compose/networking/

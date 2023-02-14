@@ -58,7 +58,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.queryByName(nome));
     }
 
-    @PostMapping("/user")
+    @PostMapping
     public ResponseEntity newUser(@RequestBody UserDTO userDTO, UriComponentsBuilder UriBuilder){        
         userService.save(userDTO);
         var uri = UriBuilder.path("user/{cpf}").buildAndExpand(userDTO.getCpf()).toUri();

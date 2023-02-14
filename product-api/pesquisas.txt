@@ -1,0 +1,3 @@
+https://www.baeldung.com/spring-response-entity
+https://www.2ndquadrant.com/en/blog/generating-and-managing-postgresql-database-migrationsupgrades-with-spring-boot-jpa/
+https://www.linkedin.com/pulse/tratando-erros-e-exce%C3%A7%C3%B5es-com-spring-boot-tiago-perroni/?originalSubdomain=pt

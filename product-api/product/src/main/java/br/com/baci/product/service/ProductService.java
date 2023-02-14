@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.baci.product.controller.ProductNotFoundException;
 import br.com.baci.product.dto.ProductDTO;
 import br.com.baci.product.model.Product;
 import br.com.baci.product.repository.ProductRepository;
@@ -44,10 +45,16 @@ public class ProductService {
     }
 
     public void delete(long productId){
+    // public void delete(long productId) throws ProductNotFoundException{
         Optional<Product> product = productRepository.findById(productId);
         if(product.isPresent()){
             productRepository.delete(product.get());
         }        
+    }
+
+    public ProductDTO findById(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        return null;
     }    
 
 }

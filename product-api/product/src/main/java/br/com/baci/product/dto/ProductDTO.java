@@ -1,13 +1,13 @@
 package br.com.baci.product.dto;
 
-import br.com.baci.product.model.Category;
 import br.com.baci.product.model.Product;
+import br.com.baci.product.model.ProductIdentifier;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ProductDTO(
     @NotBlank // verifica se a string é diferente de nulo e não é vazia
-    String productIdentifier,
+    ProductIdentifier productIdentifier,
     @NotBlank
     String nome,
     @NotBlank
@@ -15,7 +15,7 @@ public record ProductDTO(
     @NotNull
     Float preco,
     @NotNull
-    Category category
+    CategoryDTO categoryDTO
 ){
     public static ProductDTO convert(Product product){
         ProductDTO productDTO = new ProductDTO(
@@ -23,8 +23,8 @@ public record ProductDTO(
             product.getNome(),
             product.getDescricao(),
             product.getPreco(),
-            product.getCategory()
-        );                    
+            CategoryDTO.convert(product.getCategory())
+        );
         return productDTO;
     }
 }
