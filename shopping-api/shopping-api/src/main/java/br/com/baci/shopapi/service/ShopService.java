@@ -1,6 +1,8 @@
 package br.com.baci.shopapi.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,13 +13,18 @@ import org.springframework.stereotype.Service;
 import br.com.baci.shopapi.model.Shop;
 import br.com.baci.shopapi.model.ShopDTO;
 import br.com.baci.shopapi.model.ShopDadosCadastroDTO;
+import br.com.baci.shopapi.model.ShopReportDTO;
+import br.com.baci.shopapi.repository.ReportRepositoryImpl;
 import br.com.baci.shopapi.repository.ShopRepository;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor    // https://javabydeveloper.com/lombok-requiredargsconstructor-examples/
 public class ShopService {
     
     @Autowired
-    private ShopRepository shopRepository;
+    private final ShopRepository shopRepository;
+    private final ReportRepositoryImpl reportRepository;
     
     public List<ShopDTO> getAll(){
         List<Shop> shops = shopRepository.findAll();
@@ -71,5 +78,18 @@ public class ShopService {
         shop.setDate(LocalDateTime.now());
         shopRepository.save(shop);
         return ShopDTO.converter(shop);
+    }
+
+    public List<ShopDTO> getShopsByFilter(
+        LocalDate dataInicio, LocalDate dataFim, Float total
+    ){
+        List<Shop> shops = reportRepository.getShopByFilters(dataInicio, dataFim, total);
+        return shops.stream()
+               .map(ShopDTO::converter)
+               .collect(Collectors.toList());
+    }
+
+    public ShopReportDTO getReportByDate(Date dataInicio, Date dataFim){
+        return reportRepository.getReportByDate(dataInicio, dataFim);
     }
 }

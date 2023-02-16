@@ -7,9 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.com.baci.shopapi.model.Shop;
 
-public interface ShopRepository extends JpaRepository<Shop, Long>{
+public interface ShopRepository 
+    extends JpaRepository<Shop, Long>, ReportRepository{
+
     List<Shop> findAllByUserIdentifier(String userIdentifier);
     List<Shop> findAllByTotalGreaterThan(Float total);
-    // List<Shop> findAllByDateGreaterThanEquals(Date date);        
-    List<Shop> findAllByDateGreaterThan(LocalDateTime date);		
+    // List<Shop> findAllByDateGreaterThanEquals(Date date);
+    List<Shop> findAllByDateGreaterThan(LocalDateTime date);
+
 }
